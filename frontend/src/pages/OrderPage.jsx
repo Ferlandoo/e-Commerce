@@ -6,7 +6,8 @@ import { useSelector } from 'react-redux';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery } from '../slices/ordersApiSlice';
+import moment from 'moment';
+import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery, useDeliverOrderMutation } from '../slices/ordersApiSlice';
 
 
 const OrderPage = () => {
@@ -15,6 +16,8 @@ const OrderPage = () => {
     const { data: order, refetch, isLoading, isError } = useGetOrderDetailsQuery(orderId);
 
     const [payOrder, { isLoading: isPaying }] = usePayOrderMutation();
+
+    const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
 
     const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
@@ -75,6 +78,16 @@ const OrderPage = () => {
         });
     }
 
+    const deliverOrderHandler = async () => {
+        try {
+            await deliverOrder(orderId);
+            refetch();
+            toast.success('Order delivered');
+        } catch (error) {
+            toast.error(error?.data?.message || error.message)
+        }
+    }
+
     return (
         isLoading ? (<Loader />) : isError ? (<Message variant='danger' />) : (
             <>
@@ -96,7 +109,7 @@ const OrderPage = () => {
                                     {order.shippingAddress.postalCode}, {order.shippingAddress.country}
                                 </p>
                                 {order.isDelivered ? (
-                                    <Message variant='success'>Delivered on {order.deliveredAt}</Message>
+                                    <Message variant='success'>Delivered on {moment(order.deliveredAt).format('YYYY/MM/DD - HH:mm:ss')}</Message>
                                 ) : (
                                     <Message variant='danger'>Not Delivered</Message>
                                 )}
@@ -108,7 +121,7 @@ const OrderPage = () => {
                                     {order.paymentMethod}
                                 </p>
                                 {order.isPaid ? (
-                                    <Message variant='success'>Paid on {order.paidAt}</Message>
+                                    <Message variant='success'>Paid on {moment(order.paidAt).format('YYYY/MM/DD - HH:mm:ss')}</Message>
                                 ) : (
                                     <Message variant='danger'>Not Paid</Message>
                                 )}
@@ -182,6 +195,17 @@ const OrderPage = () => {
                                                 </div>
                                             </div>
                                         )}
+                                    </ListGroup.Item>
+                                )}
+                                {loadingDeliver && <Loader />}
+                                {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                    <ListGroup.Item>
+                                        <Button
+                                            type='button'
+                                            className='btn btn-block'
+                                            onClick={deliverOrderHandler}>
+                                            Mark As Delivered
+                                        </Button>
                                     </ListGroup.Item>
                                 )}
                             </ListGroup>
