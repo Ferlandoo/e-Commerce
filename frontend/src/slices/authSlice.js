@@ -13,10 +13,13 @@ const authSlice = createSlice({
         setCredentials: (state, action) => {
             state.userInfo = action.payload;
             localStorage.setItem('userInfo', JSON.stringify(action.payload));
+
+            const expirationTime = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
+            localStorage.setItem('expirationTime', expirationTime);
         },
-        logout: (state) => {
+        logout: (state, action) => {
             state.userInfo = null;
-            localStorage.removeItem('userInfo');
+            localStorage.clear();
         }
     },
 });

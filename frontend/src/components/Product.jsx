@@ -6,7 +6,7 @@ const Product = ({ product }) => {
     return (
         <Card className='my-3 p-3 rounded'>
             <Link to={`/product/${product._id}`}>
-                <div style={{ aspectRatio: "1/1" }}>
+                <div style={{ aspectRatio: "4/3" }}>
                     <Card.Img src={product.image} variant='top' style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
                 </div>
             </Link>

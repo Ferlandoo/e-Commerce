@@ -13,33 +13,34 @@ const storage = multer.diskStorage({
   },
 });
 
-function checkFileType(file, callback) {
-  const filetypes = /jpg|jpeg|png/;
+function fileFilter(request, file, callback) {
+  const filetypes = /jpe?g|png|webp/;
+  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
+  const mimetype = mimetypes.test(file.mimetype);
 
   if (extname && mimetype) {
     callback(null, true);
-  }
-  else {
-    callback(null, false);
+  } else {
+    callback(new Error('Images only!'), false);
   }
 }
 
-const upload = multer({
-  storage,
-  fileFilter(request, file, callback) {
-    checkFileType(file, callback);
-  },
-});
+const upload = multer({ storage, fileFilter });
+const uploadSingleImage = upload.single('image');
 
-router.post('/', upload.single('image'), (request, response) => {
-  response.send({
-    message: 'Image uploaded',
-    image: `/${request.file.path}`
+router.post('/', (request, response) => {
+  uploadSingleImage(request, response, function (error) {
+    if (error) {
+      response.status(400).send({ message: error.message });
+    }
+
+    response.status(200).send({
+      message: 'Image uploaded successfully',
+      image: `/${request.file.path}`,
+    });
   });
-}, (response) => {
-  response.status(400).send({ message: 'Images Only!' });
 });
 
 export default router;
