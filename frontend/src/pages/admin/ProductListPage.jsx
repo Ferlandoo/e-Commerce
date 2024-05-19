@@ -7,6 +7,7 @@ import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import Paginate from "../../components/Paginate";
 import { toast } from "react-toastify";
+import Meta from "../../components/Meta";
 
 const ProductListPage = () => {
   const { pageNumber } = useParams();
@@ -43,6 +44,7 @@ const ProductListPage = () => {
 
   return (
     <>
+      <Meta title='All Products - NodeMarket' />
       <Row className='align-items-center'>
         <Col>
           <h1>Products</h1>
@@ -94,7 +96,7 @@ const ProductListPage = () => {
           </tbody>
         </Table>
       )}
-      <Paginate pages={data.pages} page={data.page} isAdmin={true} />
+      {data && <Paginate pages={data.pages} page={data.page} isAdmin={true} />}
     </>
   )
 }

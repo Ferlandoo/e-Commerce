@@ -7,6 +7,7 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import moment from 'moment';
+import Meta from '../components/Meta';
 import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery, useDeliverOrderMutation } from '../slices/ordersApiSlice';
 
 
@@ -91,6 +92,7 @@ const OrderPage = () => {
             <Message variant='danger'>{error?.data?.message || error.error}</Message>
         ) : (
             <>
+                <Meta title='Order Page - NodeMarket' />
                 <h1>Order {order._id}</h1>
                 <Row>
                     <Col md={8}>

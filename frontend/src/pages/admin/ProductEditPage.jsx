@@ -10,6 +10,7 @@ import {
   useGetProductDetailsQuery,
   useUploadProductImageMutation
 } from '../../slices/productsApiSlice';
+import Meta from '../../components/Meta';
 
 const ProductEditPage = () => {
   const { id: productId } = useParams();
@@ -17,6 +18,7 @@ const ProductEditPage = () => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState('');
+  const [coverImage, setCoverImage] = useState('');
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState('');
   const [countInStock, setCountInStock] = useState(0);
@@ -35,6 +37,7 @@ const ProductEditPage = () => {
       setName(product.name);
       setPrice(product.price);
       setImage(product.image);
+      setCoverImage(product.coverImage);
       setBrand(product.brand);
       setCategory(product.category);
       setCountInStock(product.countInStock);
@@ -49,6 +52,7 @@ const ProductEditPage = () => {
       name,
       price,
       image,
+      coverImage,
       brand,
       category,
       countInStock,
@@ -64,7 +68,7 @@ const ProductEditPage = () => {
     }
   };
 
-  const uploadFileHandler = async (e) => {
+  const uploadImageHandler = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('image', file);
@@ -78,8 +82,23 @@ const ProductEditPage = () => {
     }
   };
 
+  const uploadCoverImageHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await uploadProductImage(formData).unwrap();
+      toast.success(response.message);
+      setCoverImage(response.image);
+    } catch (error) {
+      toast.error(error?.data?.message || error.message)
+    }
+  };
+
   return (
     <>
+      <Meta title='Edit Product - NodeMarket' />
       <Link to='/admin/productlist' className='btn btn-light my-3'>
         Go Back
       </Link>
@@ -121,7 +140,19 @@ const ProductEditPage = () => {
                 value={image}
                 onChange={(e) => setImage}
               ></Form.Control>
-              <Form.Control type='file' label='Choose File' onChange={uploadFileHandler}></Form.Control>
+              <Form.Control type='file' label='Choose File' onChange={uploadImageHandler}></Form.Control>
+            </Form.Group>
+
+            {loadingUploadImage && <Loader />}
+            <Form.Group controlId='coverImage' className='my-2'>
+              <Form.Label>Cover Image</Form.Label>
+              <Form.Control
+                type='text'
+                placeholder='Enter cover image'
+                value={coverImage}
+                onChange={(e) => setCoverImage}
+              ></Form.Control>
+              <Form.Control type='file' label='Choose File' onChange={uploadCoverImageHandler}></Form.Control>
             </Form.Group>
 
             <Form.Group controlId='brand' className='my-2'>

@@ -4,12 +4,14 @@ import { FaTimes } from "react-icons/fa";
 import { useGetOrdersQuery } from "../../slices/ordersApiSlice";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
+import Meta from "../../components/Meta";
 
 const OrderListPage = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
 
   return (
     <>
+      <Meta title='Orders - NodeMarket' />
       <h1>Orders</h1>
       {isLoading ? <Loader /> : error ? <Message variant='danger'>{error}</Message> : (
         <Table striped bordered hover responsive className='table-sm'>

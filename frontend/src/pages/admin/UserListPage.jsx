@@ -5,6 +5,7 @@ import { useGetUsersQuery, useDeleteUserMutation } from "../../slices/usersApiSl
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
+import Meta from "../../components/Meta";
 
 const UserListPage = () => {
   const { data: users, isLoading, error, refetch } = useGetUsersQuery();
@@ -25,6 +26,7 @@ const UserListPage = () => {
 
   return (
     <>
+      <Meta title='All Users - NodeMarket' />
       <h1>Users</h1>
       {loadingDelete && <Loader />}
       {isLoading ? <Loader /> : error ? <Message variant='danger'>{error}</Message> : (
