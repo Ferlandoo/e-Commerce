@@ -2,7 +2,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import { useGetProductsQuery, useCreateProductMutation, useDeleteProductMutation } from "../../slices/productsApiSlice";
+import { useGetProductsQuery, useDeleteProductMutation } from "../../slices/productsApiSlice";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import Paginate from "../../components/Paginate";
@@ -13,8 +13,6 @@ const ProductListPage = () => {
   const { pageNumber } = useParams();
 
   const { data, isLoading, error, refetch } = useGetProductsQuery({ pageNumber });
-
-  const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
 
   const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation();
 
@@ -30,18 +28,6 @@ const ProductListPage = () => {
     }
   };
 
-  const createProductHandler = async () => {
-    if (window.confirm('Are you sure you want to create a new product?')) {
-      try {
-        await createProduct();
-        refetch();
-        toast.success('Product created successfully');
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-      }
-    }
-  }
-
   return (
     <>
       <Meta title='All Products - NodeMarket' />
@@ -50,12 +36,13 @@ const ProductListPage = () => {
           <h1>Products</h1>
         </Col>
         <Col className='text-end'>
-          <Button className='btn-sm m-3' onClick={createProductHandler}>
-            <FaEdit /> Create Product
-          </Button>
+          <LinkContainer to={`/admin/product/create`}>
+            <Button className='btn-sm m-3'>
+              <FaEdit /> Create Product
+            </Button>
+          </LinkContainer>
         </Col>
       </Row>
-      {loadingCreate && <Loader />}
       {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />

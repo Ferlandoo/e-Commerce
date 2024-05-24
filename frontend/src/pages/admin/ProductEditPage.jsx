@@ -68,7 +68,7 @@ const ProductEditPage = () => {
     }
   };
 
-  const uploadImageHandler = async (e) => {
+  const createUploadHandler = (setImageFunc) => async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('image', file);
@@ -76,25 +76,14 @@ const ProductEditPage = () => {
     try {
       const response = await uploadProductImage(formData).unwrap();
       toast.success(response.message);
-      setImage(response.image);
+      setImageFunc(response.image);
     } catch (error) {
       toast.error(error?.data?.message || error.message)
     }
   };
 
-  const uploadCoverImageHandler = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await uploadProductImage(formData).unwrap();
-      toast.success(response.message);
-      setCoverImage(response.image);
-    } catch (error) {
-      toast.error(error?.data?.message || error.message)
-    }
-  };
+  const uploadImageHandler = createUploadHandler(setImage);
+  const uploadCoverImageHandler = createUploadHandler(setCoverImage);
 
   return (
     <>

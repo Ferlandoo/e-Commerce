@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import FormContainer from '../../components/FormContainer';
 import { toast } from 'react-toastify';
@@ -15,6 +14,7 @@ const ProductCreatePage = () => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState('');
+  const [coverImage, setCoverImage] = useState('');
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState('');
   const [countInStock, setCountInStock] = useState(0);
@@ -32,12 +32,12 @@ const ProductCreatePage = () => {
       name,
       price,
       image,
+      coverImage,
       brand,
       category,
       countInStock,
       description,
     };
-
     const result = await createProduct(newProduct);
     if (result.error) {
       toast.error(result.error);
@@ -45,21 +45,23 @@ const ProductCreatePage = () => {
     else {
       navigate('/admin/productlist');
     }
-  }
+  };
 
-  const uploadFileHandler = async (e) => {
+  const createUploadHandler = (setImageFunc) => async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('image', file);
-
     try {
       const response = await uploadProductImage(formData).unwrap();
       toast.success(response.message);
-      setImage(response.image);
+      setImageFunc(response.image);
     } catch (error) {
       toast.error(error?.data?.message || error.message)
     }
   };
+
+  const uploadImageHandler = createUploadHandler(setImage);
+  const uploadCoverImageHandler = createUploadHandler(setCoverImage);
 
   return (
     <>
@@ -100,7 +102,19 @@ const ProductCreatePage = () => {
               value={image}
               onChange={(e) => setImage}
             ></Form.Control>
-            <Form.Control type='file' label='Choose File' onChange={uploadFileHandler}></Form.Control>
+            <Form.Control type='file' label='Choose File' onChange={uploadImageHandler}></Form.Control>
+          </Form.Group>
+
+          {loadingUploadImage && <Loader />}
+          <Form.Group controlId='coverImage' className='my-2'>
+            <Form.Label>Cover Image</Form.Label>
+            <Form.Control
+              type='text'
+              placeholder='Enter cover image'
+              value={coverImage}
+              onChange={(e) => setCoverImage}
+            ></Form.Control>
+            <Form.Control type='file' label='Choose File' onChange={uploadCoverImageHandler}></Form.Control>
           </Form.Group>
 
           <Form.Group controlId='brand'>
