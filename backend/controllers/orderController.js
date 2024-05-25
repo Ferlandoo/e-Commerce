@@ -5,7 +5,7 @@ import Order from '../models/orderModel.js';
 // @route   POST /api/orders
 // @access  Private
 const addOrderItems = asyncHandler(async (request, response) => {
-    const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = request.body;
+    const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice, isPaid, paidAt } = request.body;
 
     if (orderItems && orderItems.length === 0) {
         response.status(400);
@@ -23,7 +23,9 @@ const addOrderItems = asyncHandler(async (request, response) => {
             itemsPrice,
             taxPrice,
             shippingPrice,
-            totalPrice
+            totalPrice,
+            isPaid,
+            paidAt,
         });
 
         const createdOrder = await order.save();
@@ -66,7 +68,7 @@ const updateOrderToPaid = asyncHandler(async (request, response) => {
             id: request.body.id,
             status: request.body.status,
             update_time: request.body.update_time,
-            email_address: request.body.payer?.email_address ?? request.user.email,
+            email_address: request.body.payer.email_address,
         };
         const updatedOrder = await order.save();
         response.status(200).json(updatedOrder);

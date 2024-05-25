@@ -28,6 +28,9 @@ const PlaceOrderPage = () => {
 
     const placeOrderHandler = async () => {
         try {
+            const isPaid = cart.paymentMethod === 'PaymentOnDelivery';
+            const paidAt = isPaid ? new Date() : null;
+
             const result = await createOrder({
                 orderItems: cart.cartItems,
                 shippingAddress: cart.shippingAddress,
@@ -36,7 +39,10 @@ const PlaceOrderPage = () => {
                 shippingPrice: cart.shippingPrice,
                 taxPrice: cart.taxPrice,
                 totalPrice: cart.totalPrice,
+                isPaid: isPaid,
+                paidAt: paidAt,
             }).unwrap();
+
             dispatch(clearCartItems());
             navigate(`/order/${result._id}`);
         } catch (error) {
@@ -44,6 +50,7 @@ const PlaceOrderPage = () => {
             toast.error(error.data ? error.data.message : error.message);
         }
     };
+
     return (
         <>
             <Meta title='Place Order - NodeMarket' />
@@ -122,11 +129,11 @@ const PlaceOrderPage = () => {
                             <ListGroup.Item>
                                 {error && <Message variant='danger'>{error.data.message}</Message>}
                             </ListGroup.Item>
-                            <ListGroup.Item>
+                            <ListGroup.Item className='d-flex justify-content-center'>
                                 {isLoading && <Loader />}
                                 <Button
                                     type='button'
-                                    className='btn-block'
+                                    className='btn-block w-100'
                                     disabled={cart.cartItems.length === 0}
                                     onClick={placeOrderHandler}>
                                     Place Order

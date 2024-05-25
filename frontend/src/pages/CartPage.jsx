@@ -79,8 +79,8 @@ const CartPage = () => {
                                 ${cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
                             </ListGroup.Item>
                         </ListGroup>
-                        <ListGroup.Item>
-                            <Button type='button' className='btn-block' disabled={cartItems.length === 0} onClick={checkoutHandler}>
+                        <ListGroup.Item className='d-flex justify-content-center'>
+                            <Button type='button' className='btn-block w-100 my-2 mx-2' disabled={cartItems.length === 0} onClick={checkoutHandler}>
                                 Proceed To Checkout
                             </Button>
                         </ListGroup.Item>

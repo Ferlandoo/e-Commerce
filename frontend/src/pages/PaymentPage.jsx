@@ -50,10 +50,10 @@ const PaymentPage = () => {
                             <Form.Check
                                 type='radio'
                                 className='my-2'
-                                label='Stripe'
-                                id='Stripe'
+                                label='PaymentOnDelivery'
+                                id='PaymentOnDelivery'
                                 name='paymentMethod'
-                                value='Stripe'
+                                value='PaymentOnDelivery'
                                 onChange={(e) => setPaymentMethod(e.target.value)}
                             ></Form.Check>
                         </Col>

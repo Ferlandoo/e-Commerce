@@ -37,7 +37,7 @@ const OrderPage = () => {
                     }
                 });
                 paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
-            }
+            };
             if (order && !order.isPaid) {
                 if (!window.paypal) {
                     loadPayPalScript();
@@ -49,7 +49,7 @@ const OrderPage = () => {
     function onApprove(data, actions) {
         return actions.order.capture().then(async function (details) {
             try {
-                await payOrder({ orderId, details }).unwrap();
+                await payOrder({ orderId, details });
                 refetch();
                 toast.success('Order is paid');
             } catch (err) {
@@ -65,9 +65,7 @@ const OrderPage = () => {
         return action.order.create({
             purchase_units: [
                 {
-                    amount: {
-                        value: order.totalPrice,
-                    },
+                    amount: { value: order.totalPrice },
                 },
             ],
         }).then((orderID) => {
